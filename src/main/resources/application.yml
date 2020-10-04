@@ -1,0 +1,39 @@
+spring:
+  profiles:
+    active: local
+#  batch:
+#    job:
+#      names: ${job.name:NONE}
+
+---
+spring:
+  profiles: local
+  datasource:
+    hikari:
+      idle-timeout: 10000
+      minimum-idle: 5
+      maximum-pool-size: 5
+      pool-name: shard-demo-pool
+      connection-timeout: 5000
+      validation-timeout: 5000
+    main-db:
+      url: jdbc:mysql://localhost:3306/bbs_main?useSSL=false
+      username: board
+      password: test1234
+      driver-class-name: com.mysql.jdbc.Driver
+    shard-db:
+      -
+        url: jdbc:mysql://localhost:3306/bbs_0?useSSL=false
+        username: board
+        password: test1234
+        driver-class-name: com.mysql.jdbc.Driver
+      -
+        url: jdbc:mysql://localhost:3306/bbs_1?useSSL=false
+        username: board
+        password: test1234
+        driver-class-name: com.mysql.jdbc.Driver
+      -
+        url: jdbc:mysql://localhost:3306/bbs_2?useSSL=false
+        username: board
+        password: test1234
+        driver-class-name: com.mysql.jdbc.Driver
