@@ -18,3 +18,4 @@
  3. job config
     * ItemReader 커스텀 하여 shard번호에 따라 빈으로 등록해 놓은 sqlTemplate Map 에서 샤딩디비에 맞는 sqlSession을 가져와 실행  
       (MybatigReader 소스를 참고)
+    * LoopDecider 를 통해 샤딩된 디비 갯수 만큼 step 반복
