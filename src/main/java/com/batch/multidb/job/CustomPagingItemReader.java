@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.database.AbstractPagingItemReader;
 
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Slf4j
@@ -16,10 +17,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @RequiredArgsConstructor
 public class CustomPagingItemReader extends AbstractPagingItemReader {
 
-    private final int shardNumber;
+    private final LoopDecider decider;
     private final ShardingDbDao shardingDbDao;
     private final String queryId;
-    private final Article parameter;
 
     @Override
     protected void doReadPage() {
@@ -28,7 +28,13 @@ public class CustomPagingItemReader extends AbstractPagingItemReader {
         } else {
             results.clear();
         }
-        results.addAll(shardingDbDao.getSqlSession(shardNumber).selectList(queryId, parameter));
+
+        Article parameter = new Article(decider.getCurruntCount());
+
+        log.info("실행 디비 샤드 넘버 : {}, {}", parameter.getShardNumber(), parameter.getShardDbName());
+        List<Object> objectList = shardingDbDao.getSqlSession(decider.getCurruntCount()).selectList(queryId, parameter);
+
+        results.addAll(objectList);
     }
 
     @Override

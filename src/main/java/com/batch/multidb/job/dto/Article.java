@@ -2,18 +2,20 @@ package com.batch.multidb.job.dto;
 
 import com.batch.multidb.job.dao.ShardingDbDao;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Getter
 @ToString
+@NoArgsConstructor
 public class Article {
-
-    private int shardNumber;
-    private String shardDbName;
 
     private int id;
     private String title;
     private String content;
+
+    private int shardNumber;
+    private String shardDbName;
 
     public Article(int shardNumber) {
         this.shardNumber = shardNumber;

@@ -6,6 +6,10 @@ spring:
 #      names: ${job.name:NONE}
 
 ---
+shard:
+  db:
+    count: 3
+
 spring:
   profiles: local
   datasource:

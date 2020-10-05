@@ -7,10 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.job.builder.FlowBuilder;
+import org.springframework.batch.core.job.flow.Flow;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -22,43 +25,64 @@ public class ShardingDataJob {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
     private final ShardingDbDao shardingDbDao;
+    private final LoopDecider decider;
 
     private static final int chunkSize = 1000;
 
     @Bean
     public Job shardingSampleJob() throws Exception {
-        return jobBuilderFactory.get("shardingSampleJob")
+
+        FlowBuilder<Flow> flowBuilder = new FlowBuilder<Flow>("shardLootFlow");
+
+        Flow flow = flowBuilder
                 .start(shardingSampleStep())
+                .next(decider)
+                .on(LoopDecider.CONTINUE)
+                .to(shardingSampleStep())
+                .from(decider)
+                .on(LoopDecider.COMPLETED)
+                .end()
+                .build();
+
+        return jobBuilderFactory.get("shardingSampleJob")
+                .incrementer(new RunIdIncrementer()) //jobId 발급
+                .start(flow)
+                .end()
                 .build();
     }
 
     @Bean
-    @JobScope
+    public Step startSampleStep() throws Exception {
+        return stepBuilderFactory.get("startShardingSampleStep")
+                .tasklet((contribution, chunkContext) -> {
+                    log.info(">>>>> start Step");
+                    return RepeatStatus.FINISHED;
+                })
+                .build();
+    }
+
+    @Bean
     public Step shardingSampleStep() throws Exception {
         return stepBuilderFactory.get("shardingSampleStep")
                 .<Article, Article>chunk(chunkSize)
-                .reader(shardingItemReader())
+                .reader(shardingItemReader(null))
                 .writer(shardingItemWriter())
+                .allowStartIfComplete(true)
                 .build();
     }
 
     @Bean
-    public ItemReader<Article> shardingItemReader() {
-
-        int shardNumber = 0;
-        Article parameter = new Article(shardNumber);
-
+    public ItemReader<Article> shardingItemReader(LoopDecider decider) {
         return CustomPagingItemReader.builder()
-                .shardNumber(shardNumber)
+                .decider(decider)
                 .shardingDbDao(shardingDbDao)
                 .queryId("sharding.articles.selectArticle")
-                .parameter(parameter)
                 .build();
     }
 
     private ItemWriter<Article> shardingItemWriter() {
         return list -> {
-            for (Article article: list) {
+            for (Article article : list) {
                 log.info("<<<<<<<<<<<<<< current article : {} ", article);
             }
         };

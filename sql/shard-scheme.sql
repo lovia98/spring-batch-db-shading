@@ -22,12 +22,12 @@ CREATE TABLE `article` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
-INSERT INTO `bbs_0`.`article` (`title`, `content`) VALUES ( 'shard-db0', 'shard-db2-data0');
-INSERT INTO `bbs_0`.`article` (`title`, `content`) VALUES ( 'shard-db0', 'shard-db2-data1');
-INSERT INTO `bbs_0`.`article` (`title`, `content`) VALUES ( 'shard-db0', 'shard-db2-data2');
-INSERT INTO `bbs_1`.`article` (`title`, `content`) VALUES ( 'shard-db1', 'shard-db2-data0');
-INSERT INTO `bbs_1`.`article` (`title`, `content`) VALUES ( 'shard-db1', 'shard-db2-data1');
-INSERT INTO `bbs_1`.`article` (`title`, `content`) VALUES ( 'shard-db1', 'shard-db2-data2');
+INSERT INTO `bbs_0`.`article` (`title`, `content`) VALUES ( 'shard-db0', 'shard-db0-data0');
+INSERT INTO `bbs_0`.`article` (`title`, `content`) VALUES ( 'shard-db0', 'shard-db0-data1');
+INSERT INTO `bbs_0`.`article` (`title`, `content`) VALUES ( 'shard-db0', 'shard-db0-data2');
+INSERT INTO `bbs_1`.`article` (`title`, `content`) VALUES ( 'shard-db1', 'shard-db1-data0');
+INSERT INTO `bbs_1`.`article` (`title`, `content`) VALUES ( 'shard-db1', 'shard-db1-data1');
+INSERT INTO `bbs_1`.`article` (`title`, `content`) VALUES ( 'shard-db1', 'shard-db1-data2');
 INSERT INTO `bbs_2`.`article` (`title`, `content`) VALUES ( 'shard-db2', 'shard-db2-data0');
 INSERT INTO `bbs_2`.`article` (`title`, `content`) VALUES ( 'shard-db2', 'shard-db2-data1');
 INSERT INTO `bbs_2`.`article` (`title`, `content`) VALUES ( 'shard-db2', 'shard-db2-data2');
