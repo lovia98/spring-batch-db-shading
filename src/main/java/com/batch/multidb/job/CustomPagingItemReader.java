@@ -1,7 +1,7 @@
 package com.batch.multidb.job;
 
-import com.batch.multidb.job.dao.ShardingDbDao;
-import com.batch.multidb.job.dto.Article;
+import com.batch.multidb.dao.ShardingDbDao;
+import com.batch.multidb.dto.Article;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -30,8 +30,11 @@ public class CustomPagingItemReader extends AbstractPagingItemReader {
         }
 
         Article parameter = new Article(decider.getCurruntCount());
+        parameter.setPageSize(getPageSize());
+        parameter.setSkipRows(getPage() * getPageSize());
 
-        log.info("실행 디비 샤드 넘버 : {}, {}", parameter.getShardNumber(), parameter.getShardDbName());
+        log.info("실행 디비 샤드 넘버 : {}, dbName: {}, startIndex: {}, pageSize: {}",
+                parameter.getShardNumber(), parameter.getShardDbName(), parameter.getSkipRows(), parameter.getPageSize());
         List<Object> objectList = shardingDbDao.getSqlSession(decider.getCurruntCount()).selectList(queryId, parameter);
 
         results.addAll(objectList);

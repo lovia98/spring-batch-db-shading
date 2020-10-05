@@ -1,6 +1,7 @@
-package com.batch.multidb.job.dto;
+package com.batch.multidb.dto;
 
-import com.batch.multidb.job.dao.ShardingDbDao;
+import com.batch.multidb.dao.ShardingDbDao;
+import com.batch.multidb.vo.Paging;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -8,7 +9,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @NoArgsConstructor
-public class Article {
+public class Article extends Paging {
 
     private int id;
     private String title;

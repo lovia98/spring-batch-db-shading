@@ -1,7 +1,7 @@
 package com.batch.multidb.job;
 
-import com.batch.multidb.job.dao.ShardingDbDao;
-import com.batch.multidb.job.dto.Article;
+import com.batch.multidb.dao.ShardingDbDao;
+import com.batch.multidb.dto.Article;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -17,6 +17,10 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * 샤딩 디비에서 데이터를 read 하는 sampleJob
+ *   - 샤딩된 디비 갯수에 따라 step 반복
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Configuration
@@ -35,8 +39,8 @@ public class ShardingDataJob {
         FlowBuilder<Flow> flowBuilder = new FlowBuilder<Flow>("shardLootFlow");
 
         Flow flow = flowBuilder
-                .start(shardingSampleStep())
-                .next(decider)
+                .start(shardingSampleStep()) //startStep
+                .next(decider)              //shardingSampleStep를 실행할지 여부를 판단하는 설정 객체
                 .on(LoopDecider.CONTINUE)
                 .to(shardingSampleStep())
                 .from(decider)
@@ -73,11 +77,16 @@ public class ShardingDataJob {
 
     @Bean
     public ItemReader<Article> shardingItemReader(LoopDecider decider) {
-        return CustomPagingItemReader.builder()
+
+        CustomPagingItemReader pagingItemReader = CustomPagingItemReader.builder()
                 .decider(decider)
                 .shardingDbDao(shardingDbDao)
                 .queryId("sharding.articles.selectArticle")
                 .build();
+
+        pagingItemReader.setPageSize(chunkSize);
+
+        return pagingItemReader;
     }
 
     private ItemWriter<Article> shardingItemWriter() {

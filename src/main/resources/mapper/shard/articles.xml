@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="sharding.articles">
-    <select id="selectArticle" parameterType="com.batch.multidb.job.dto.Article" resultType="com.batch.multidb.job.dto.Article">
+    <select id="selectArticle" parameterType="com.batch.multidb.dto.Article" resultType="com.batch.multidb.dto.Article">
         select
             id,
             title,
             content
-        from ${shardDbName}.article;
+        from ${shardDbName}.article
+        limit ${skipRows}, ${pageSize}
     </select>
 </mapper>

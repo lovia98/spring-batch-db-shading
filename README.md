@@ -1,4 +1,4 @@
-# Spring Batch Sharding Database 적용 Sample
+# Spring Batch Sharding DataSource(multi datasource) 설정 Sample
 
 ## 개요
  * 샤딩된 디비(multi database)에서 데이터를 얻어오는 동작이 필요한 경우 spring batch 설정

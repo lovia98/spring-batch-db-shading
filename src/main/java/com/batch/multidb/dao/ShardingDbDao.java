@@ -1,4 +1,4 @@
-package com.batch.multidb.job.dao;
+package com.batch.multidb.dao;
 
 import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionTemplate;
